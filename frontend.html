@@ -1,0 +1,1082 @@
+<!DOCTYPE html>
+<html lang="en"></html>
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Dough & Dough 🧁</title>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,wght@0,300;0,500;0,700;1,300;1,500&family=Caveat:wght@400;600;700&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --cream:    #FDF6EC;
+    --paper:    #F5EDD8;
+    --kraft:    #C8A96E;
+    --amber:    #D47C2F;
+    --dark:     #2C1A0E;
+    --charcoal: #3D2B1A;
+    --rose:     #C9636A;
+    --sage:     #5A8A5A;
+    --sky:      #4A7FA8;
+    --gold:     #E8B84B;
+    --shadow:   rgba(44,26,14,0.15);
+    --app-h:    calc(100vh - 110px);
+  }
+
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+
+  html, body { height: 100%; overflow: hidden; }
+
+  body {
+    background: var(--cream);
+    background-image:
+      radial-gradient(ellipse at 15% 10%, #f0ddb855 0%, transparent 50%),
+      radial-gradient(ellipse at 85% 90%, #e8d5b055 0%, transparent 50%);
+    font-family: 'DM Sans', sans-serif;
+    color: var(--dark);
+    display: flex;
+    flex-direction: column;
+    height: 100vh;
+  }
+
+  /* ── HEADER ── */
+  header {
+    background: var(--dark);
+    color: var(--cream);
+    padding: 0 20px;
+    height: 52px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    border-bottom: 3px solid var(--amber);
+    flex-shrink: 0;
+    z-index: 10;
+  }
+  .logo { font-family: 'Fraunces', serif; font-size: 1.4rem; font-weight: 700; }
+  .logo span { color: var(--gold); }
+  .header-stats { display: flex; gap: 16px; align-items: center; }
+  .hstat {
+    display: flex; align-items: center; gap: 5px;
+    font-family: 'Fraunces', serif; font-size: 1rem; font-weight: 600;
+  }
+  .hstat .label { font-family: 'DM Sans', sans-serif; font-size: 0.68rem; color: var(--kraft); font-weight: 400; margin-right: 2px; }
+  .hstat.coins { color: var(--gold); }
+  .hstat.savings { color: #8fbc8f; }
+  .day-pill {
+    font-family: 'Caveat', cursive; font-size: 1rem; color: var(--kraft);
+    background: rgba(255,255,255,0.07); border: 1px solid rgba(200,169,110,0.25);
+    border-radius: 20px; padding: 3px 14px;
+  }
+
+  /* Stress banner */
+  .stress-banner {
+    display: none; background: var(--rose); color: white;
+    text-align: center; padding: 7px; font-size: 0.82rem;
+    font-family: 'Fraunces', serif; flex-shrink: 0;
+    animation: pulse 2s infinite;
+  }
+  @keyframes pulse { 0%,100%{opacity:1} 50%{opacity:.85} }
+
+  /* ── TAB BAR ── */
+  .tab-bar {
+    background: var(--paper);
+    border-bottom: 2px solid var(--kraft);
+    display: flex;
+    flex-shrink: 0;
+    height: 48px;
+  }
+  .tab-btn {
+    flex: 1; border: none; background: transparent;
+    font-family: 'DM Sans', sans-serif; font-size: 0.8rem; font-weight: 500;
+    color: var(--kraft); cursor: pointer; padding: 0 8px;
+    display: flex; align-items: center; justify-content: center; gap: 5px;
+    border-bottom: 3px solid transparent;
+    transition: all 0.18s; position: relative; top: 2px;
+    white-space: nowrap;
+  }
+  .tab-btn .tab-icon { font-size: 1rem; }
+  .tab-btn:hover { color: var(--charcoal); background: rgba(200,169,110,0.1); }
+  .tab-btn.active {
+    color: var(--dark); border-bottom-color: var(--amber);
+    background: var(--cream); font-weight: 600;
+  }
+  .tab-badge {
+    background: var(--rose); color: white; border-radius: 10px;
+    font-size: 0.6rem; padding: 1px 5px; font-weight: 700; line-height: 1.4;
+    display: none;
+  }
+  .tab-badge.visible { display: inline-block; }
+
+  /* ── TAB PANELS ── */
+  .panels { flex: 1; overflow: hidden; position: relative; }
+  .panel {
+    position: absolute; inset: 0;
+    overflow-y: auto; overflow-x: hidden;
+    padding: 20px;
+    display: none;
+    animation: fadeIn 0.2s ease;
+  }
+  .panel.active { display: block; }
+  @keyframes fadeIn { from{opacity:0;transform:translateY(6px)} to{opacity:1;transform:translateY(0)} }
+
+  /* Scrollbar */
+  .panel::-webkit-scrollbar { width: 5px; }
+  .panel::-webkit-scrollbar-track { background: transparent; }
+  .panel::-webkit-scrollbar-thumb { background: var(--kraft); border-radius: 3px; }
+
+  /* ── SHARED COMPONENTS ── */
+  .section-title {
+    font-family: 'Fraunces', serif; font-size: 0.72rem; font-weight: 500;
+    text-transform: uppercase; letter-spacing: 2px; color: var(--kraft);
+    margin-bottom: 12px;
+  }
+  .card {
+    background: var(--paper); border: 1.5px solid var(--kraft);
+    border-radius: 14px; padding: 16px; margin-bottom: 14px;
+  }
+  .card-dark {
+    background: var(--dark); border: 1.5px solid var(--amber);
+    border-radius: 14px; padding: 16px; margin-bottom: 14px; color: var(--cream);
+  }
+
+  /* ── TAB 1: BAKERY ── */
+  .bakery-scene {
+    background: var(--dark); border-radius: 18px; padding: 20px;
+    margin-bottom: 14px; position: relative; overflow: hidden;
+    border: 1.5px solid rgba(200,169,110,0.2);
+  }
+  .bakery-scene::before {
+    content:''; position:absolute; inset:0;
+    background: repeating-linear-gradient(45deg,transparent,transparent 12px,rgba(255,255,255,0.012) 12px,rgba(255,255,255,0.012) 24px);
+    pointer-events: none;
+  }
+  .bakery-title {
+    font-family: 'Fraunces', serif; font-size: 1.1rem; font-weight: 700;
+    font-style: italic; color: var(--gold); text-align: center; margin-bottom: 16px;
+  }
+  .upgrades-row {
+    display: grid; grid-template-columns: repeat(4, 1fr); gap: 10px; margin-bottom: 16px;
+  }
+  .upgrade-slot {
+    aspect-ratio: 1; border: 2px dashed rgba(200,169,110,0.25);
+    border-radius: 12px; display: flex; flex-direction: column;
+    align-items: center; justify-content: center; gap: 3px;
+    font-size: 1.6rem; color: rgba(255,255,255,0.1); transition: all 0.4s;
+  }
+  .upgrade-slot .slot-label { font-size: 0.58rem; font-family:'Caveat',cursive; color:rgba(200,169,110,0.3); text-align:center; line-height:1.1; }
+  .upgrade-slot.active {
+    border-color: var(--amber); background: rgba(212,124,47,0.12);
+    color: var(--cream); animation: appear 0.5s cubic-bezier(0.34,1.56,0.64,1);
+  }
+  .upgrade-slot.active .slot-label { color: var(--kraft); }
+  @keyframes appear { from{transform:scale(0.4) rotate(-15deg);opacity:0} to{transform:scale(1) rotate(0);opacity:1} }
+
+  .oven-row {
+    background: rgba(255,255,255,0.04); border: 1px solid rgba(200,169,110,0.15);
+    border-radius: 10px; padding: 12px;
+  }
+  .oven-label { font-size: 0.65rem; color: var(--kraft); text-transform:uppercase; letter-spacing:1px; margin-bottom:8px; }
+  .recipes { display:flex; gap:7px; flex-wrap:wrap; }
+  .recipe-chip {
+    background: rgba(200,169,110,0.12); border: 1px solid rgba(200,169,110,0.25);
+    border-radius: 20px; padding: 5px 12px; font-size: 0.78rem; color: var(--cream);
+    cursor: pointer; transition: all 0.18s; display:flex; align-items:center; gap:4px;
+  }
+  .recipe-chip:hover { background: rgba(212,124,47,0.3); border-color:var(--amber); transform:scale(1.05); }
+  .recipe-chip:active { transform:scale(0.97); }
+
+  /* Pantry grid */
+  .pantry-grid { display:grid; grid-template-columns:repeat(5,1fr); gap:10px; }
+  .ingredient-cell { display:flex; flex-direction:column; align-items:center; gap:4px; }
+  .ingredient-icon {
+    width:100%; aspect-ratio:1; border-radius:10px; background:var(--cream);
+    border: 1.5px solid var(--kraft); display:flex; align-items:center;
+    justify-content:center; font-size:1.4rem; transition:transform 0.18s;
+  }
+  .ingredient-icon.pop { animation: pop 0.35s cubic-bezier(0.34,1.56,0.64,1); }
+  @keyframes pop { 0%{transform:scale(1)} 50%{transform:scale(1.3)} 100%{transform:scale(1)} }
+  .ingredient-qty { font-family:'Fraunces',serif; font-size:1.1rem; font-weight:700; }
+  .ingredient-name { font-size:0.6rem; color:var(--kraft); text-transform:uppercase; letter-spacing:0.5px; }
+
+  /* ── TAB 2: ACTIONS ── */
+  .action-btn {
+    width:100%; padding: 14px 16px; border: 1.5px solid var(--kraft);
+    border-radius: 12px; background: var(--cream); color: var(--dark);
+    font-family: 'DM Sans', sans-serif; font-size:0.88rem; font-weight:500;
+    cursor:pointer; text-align:left; display:flex; align-items:center; gap:12px;
+    transition:all 0.15s; margin-bottom:8px;
+  }
+  .action-btn:hover { background:var(--dark); color:var(--cream); border-color:var(--dark); transform:translateX(-3px); box-shadow:4px 4px 0 var(--amber); }
+  .action-btn .aicon { font-size:1.2rem; width:28px; text-align:center; }
+  .action-btn .atext { flex:1; }
+  .action-btn .ahint { font-size:0.7rem; opacity:0.6; }
+  .action-btn.green { border-color:var(--sage); }
+  .action-btn.green:hover { background:var(--sage); border-color:var(--sage); color:white; box-shadow:4px 4px 0 rgba(90,138,90,0.3); }
+  .action-btn.red { border-color:var(--rose); }
+  .action-btn.red:hover { background:var(--rose); border-color:var(--rose); color:white; box-shadow:4px 4px 0 rgba(201,99,106,0.3); }
+
+  .end-day-btn {
+    width:100%; padding:15px; background:var(--dark); color:var(--gold);
+    border: 2px solid var(--amber); border-radius:12px;
+    font-family:'Fraunces',serif; font-size:1.05rem; font-weight:500; font-style:italic;
+    cursor:pointer; transition:all 0.2s; text-align:center; margin-top:6px;
+  }
+  .end-day-btn:hover { background:var(--amber); color:white; transform:translateY(-2px); box-shadow:0 4px 16px rgba(212,124,47,0.4); }
+
+  /* ── TAB 3: INVEST ── */
+  .starter-hero {
+    background: linear-gradient(135deg, #3D2B1A, #2C1A0E);
+    border-radius: 16px; padding: 22px; color: var(--cream);
+    border: 1.5px solid var(--amber); margin-bottom:14px;
+  }
+  .starter-balance { font-family:'Fraunces',serif; font-size:2.6rem; font-weight:700; color:var(--gold); line-height:1; }
+  .starter-sub { font-size:0.72rem; color:var(--kraft); margin-top:3px; margin-bottom:18px; }
+  .starter-input-row { display:flex; gap:8px; }
+  .dark-input {
+    flex:1; background:rgba(255,255,255,0.08); border:1px solid rgba(200,169,110,0.3);
+    border-radius:8px; padding:10px 12px; color:var(--cream);
+    font-family:'DM Sans',sans-serif; font-size:0.88rem; outline:none;
+    transition:border-color 0.2s;
+  }
+  .dark-input:focus { border-color:var(--amber); }
+  .dark-input::placeholder { color:rgba(200,169,110,0.35); }
+  .btn-feed {
+    background:var(--amber); color:white; border:none; border-radius:8px;
+    padding:10px 18px; font-family:'DM Sans',sans-serif; font-weight:500;
+    font-size:0.85rem; cursor:pointer; transition:all 0.15s; white-space:nowrap;
+  }
+  .btn-feed:hover { background:var(--gold); transform:translateY(-1px); }
+
+  .growth-viz {
+    background: var(--paper); border:1.5px solid var(--kraft);
+    border-radius:14px; padding:16px; margin-bottom:14px;
+  }
+  .growth-bar-track { background:rgba(44,26,14,0.08); border-radius:8px; height:10px; overflow:hidden; margin:10px 0 6px; }
+  .growth-bar-fill { height:100%; border-radius:8px; background:linear-gradient(90deg,var(--amber),var(--gold)); transition:width 0.8s cubic-bezier(0.4,0,0.2,1); }
+  .growth-stats { display:grid; grid-template-columns:1fr 1fr; gap:10px; margin-top:10px; }
+  .gstat { background:var(--cream); border-radius:10px; padding:10px 12px; border:1px solid rgba(200,169,110,0.4); }
+  .gstat-label { font-size:0.65rem; color:var(--kraft); text-transform:uppercase; letter-spacing:1px; }
+  .gstat-val { font-family:'Fraunces',serif; font-size:1.1rem; font-weight:700; color:var(--dark); margin-top:2px; }
+
+  /* ── TAB 4: SUPPLIER ── */
+  .score-hero {
+    background:var(--dark); border-radius:16px; padding:22px;
+    color:var(--cream); margin-bottom:14px; border:1.5px solid rgba(200,169,110,0.2);
+  }
+  .score-num { font-family:'Fraunces',serif; font-size:3rem; font-weight:700; color:var(--gold); line-height:1; }
+  .score-tier { font-family:'Caveat',cursive; font-size:1.2rem; color:var(--kraft); margin-bottom:12px; }
+  .score-bar-track { background:rgba(255,255,255,0.08); border-radius:8px; height:10px; overflow:hidden; margin-bottom:6px; }
+  .score-bar-fill { height:100%; border-radius:8px; background:linear-gradient(90deg,var(--amber),var(--gold)); transition:width 0.8s cubic-bezier(0.4,0,0.2,1); }
+  .score-discount { font-size:0.72rem; color:var(--kraft); }
+
+  .tier-ladder { margin-bottom:14px; }
+  .tier-step {
+    display:flex; align-items:center; gap:12px; padding:10px 14px;
+    border-radius:10px; margin-bottom:6px; background:var(--cream);
+    border:1.5px solid rgba(200,169,110,0.25); transition:all 0.2s;
+  }
+  .tier-step.current { border-color:var(--amber); background:rgba(212,124,47,0.06); }
+  .tier-step.achieved { border-color:var(--sage); }
+  .tier-dot { width:10px; height:10px; border-radius:50%; background:rgba(200,169,110,0.3); flex-shrink:0; }
+  .tier-step.achieved .tier-dot { background:var(--sage); }
+  .tier-step.current .tier-dot { background:var(--amber); box-shadow:0 0 0 3px rgba(212,124,47,0.2); }
+  .tier-name { font-weight:500; font-size:0.85rem; flex:1; }
+  .tier-score { font-size:0.72rem; color:var(--kraft); }
+  .tier-perk { font-size:0.7rem; color:var(--sage); font-family:'Caveat',cursive; font-size:0.85rem; }
+
+  .supplier-btns { display:flex; gap:10px; margin-bottom:14px; }
+  .btn-pay-full {
+    flex:1; padding:13px; background:var(--sage); color:white;
+    border:none; border-radius:12px; font-family:'DM Sans',sans-serif;
+    font-weight:500; font-size:0.88rem; cursor:pointer; transition:all 0.15s;
+    display:flex; align-items:center; justify-content:center; gap:6px;
+  }
+  .btn-pay-full:hover { filter:brightness(1.1); transform:translateY(-1px); }
+  .btn-miss-full {
+    flex:1; padding:13px; background:transparent; color:var(--rose);
+    border: 1.5px solid var(--rose); border-radius:12px; font-family:'DM Sans',sans-serif;
+    font-weight:500; font-size:0.88rem; cursor:pointer; transition:all 0.15s;
+    display:flex; align-items:center; justify-content:center; gap:6px;
+  }
+  .btn-miss-full:hover { background:var(--rose); color:white; transform:translateY(-1px); }
+
+  /* ── TAB 5: MISSIONS ── */
+  .mission-card {
+    background:var(--cream); border:1.5px solid var(--kraft);
+    border-radius:12px; padding:14px 16px; margin-bottom:8px;
+    cursor:pointer; transition:all 0.18s; display:flex; align-items:center; gap:12px;
+    position:relative; overflow:hidden;
+  }
+  .mission-card::before {
+    content:''; position:absolute; left:0;top:0;bottom:0;
+    width:4px; background:var(--amber); border-radius:2px 0 0 2px;
+  }
+  .mission-card:hover { transform:translateX(4px); box-shadow:3px 3px 0 var(--kraft); }
+  .mission-card.done { opacity:0.45; cursor:default; }
+  .mission-card.done::before { background:var(--sage); }
+  .mission-check {
+    width:22px; height:22px; border-radius:50%; border:2px solid var(--kraft);
+    display:flex; align-items:center; justify-content:center; flex-shrink:0;
+    font-size:0.75rem; transition:all 0.2s;
+  }
+  .mission-card.done .mission-check { background:var(--sage); border-color:var(--sage); color:white; }
+  .mission-body { flex:1; }
+  .mission-desc { font-size:0.85rem; font-weight:500; }
+  .mission-card.done .mission-desc { text-decoration:line-through; }
+  .mission-reward { font-family:'Caveat',cursive; font-size:0.9rem; color:var(--sage); margin-top:2px; }
+  .missions-reset-btn {
+    width:100%; padding:12px; background:transparent; border:1.5px dashed var(--kraft);
+    border-radius:12px; font-family:'DM Sans',sans-serif; font-size:0.82rem; color:var(--kraft);
+    cursor:pointer; transition:all 0.15s; margin-top:4px;
+  }
+  .missions-reset-btn:hover { border-color:var(--amber); color:var(--amber); }
+
+  /* ── TAB 6: FEED ── */
+  .feed-item {
+    display:flex; gap:10px; align-items:flex-start;
+    background:var(--cream); border:1px solid rgba(200,169,110,0.35);
+    border-radius:10px; padding:10px 12px; margin-bottom:7px;
+    animation: slideIn 0.25s ease;
+  }
+  @keyframes slideIn { from{transform:translateX(16px);opacity:0} to{transform:translateX(0);opacity:1} }
+  .feed-emoji { font-size:1.05rem; flex-shrink:0; margin-top:1px; }
+  .feed-msg { font-size:0.8rem; color:var(--charcoal); line-height:1.45; }
+  .feed-item.save     { border-left:3px solid var(--sage); }
+  .feed-item.impulse_buy  { border-left:3px solid var(--rose); }
+  .feed-item.mindful_buy  { border-left:3px solid var(--sky); }
+  .feed-item.resist   { border-left:3px solid var(--sage); }
+  .feed-item.bake     { border-left:3px solid var(--amber); }
+  .feed-item.invest   { border-left:3px solid var(--gold); }
+  .feed-item.upgrade  { border-left:3px solid var(--gold); background:rgba(232,184,75,0.04); }
+  .feed-item.pay_supplier  { border-left:3px solid var(--sky); }
+  .feed-item.miss_payment  { border-left:3px solid var(--rose); }
+  .feed-item.stress   { border-left:3px solid var(--rose); background:rgba(201,99,106,0.04); }
+  .feed-item.mission_done  { border-left:3px solid var(--sage); }
+  .feed-empty { text-align:center; color:var(--kraft); font-family:'Caveat',cursive; font-size:1.1rem; padding:30px; }
+
+  /* ── MODAL ── */
+  .modal-overlay {
+    display:none; position:fixed; inset:0;
+    background:rgba(44,26,14,0.55); backdrop-filter:blur(5px);
+    z-index:200; align-items:center; justify-content:center;
+  }
+  .modal-overlay.open { display:flex; }
+  .modal {
+    background:var(--cream); border:2px solid var(--kraft);
+    border-radius:20px; padding:26px; width:340px; max-width:92vw;
+    box-shadow:0 16px 48px var(--shadow);
+    animation:modalIn 0.22s cubic-bezier(0.34,1.56,0.64,1);
+  }
+  @keyframes modalIn { from{transform:scale(0.85);opacity:0} to{transform:scale(1);opacity:1} }
+  .modal-title { font-family:'Fraunces',serif; font-size:1.15rem; font-weight:700; margin-bottom:14px; }
+  .modal-input {
+    width:100%; background:white; border:1.5px solid var(--kraft);
+    border-radius:10px; padding:10px 14px; font-family:'DM Sans',sans-serif;
+    font-size:0.9rem; outline:none; margin-bottom:8px; color:var(--dark);
+    transition:border-color 0.2s;
+  }
+  .modal-input:focus { border-color:var(--amber); }
+  .impulse-row { display:flex; align-items:center; gap:8px; margin-bottom:14px; cursor:pointer; }
+  .impulse-row input { accent-color:var(--rose); width:15px; height:15px; cursor:pointer; }
+  .impulse-row label { font-size:0.82rem; color:var(--charcoal); cursor:pointer; }
+  .modal-btns { display:flex; gap:8px; }
+  .btn-confirm {
+    flex:1; padding:11px; background:var(--dark); color:var(--cream);
+    border:none; border-radius:10px; font-family:'DM Sans',sans-serif;
+    font-weight:500; font-size:0.88rem; cursor:pointer; transition:all 0.15s;
+  }
+  .btn-confirm:hover { background:var(--amber); }
+  .btn-cancel {
+    flex:1; padding:11px; background:transparent; color:var(--kraft);
+    border:1.5px solid var(--kraft); border-radius:10px;
+    font-family:'DM Sans',sans-serif; font-weight:500; font-size:0.88rem;
+    cursor:pointer; transition:all 0.15s;
+  }
+  .btn-cancel:hover { border-color:var(--dark); color:var(--dark); }
+
+  /* ── TOAST ── */
+  .toast-wrap {
+    position:fixed; bottom:20px; left:50%; transform:translateX(-50%);
+    z-index:300; display:flex; flex-direction:column; gap:7px;
+    align-items:center; pointer-events:none;
+  }
+  .toast {
+    background:var(--dark); color:var(--cream); border:1.5px solid var(--amber);
+    border-radius:30px; padding:9px 20px; font-size:0.82rem;
+    font-family:'DM Sans',sans-serif; white-space:nowrap;
+    animation:tIn 0.25s ease, tOut 0.35s ease 2.65s forwards;
+  }
+  @keyframes tIn  { from{transform:translateY(16px);opacity:0} to{transform:translateY(0);opacity:1} }
+  @keyframes tOut { from{opacity:1} to{opacity:0} }
+
+  /* Stat bump */
+  .bump { animation: statbump 0.35s ease; }
+  @keyframes statbump { 0%{transform:scale(1)} 50%{transform:scale(1.2)} 100%{transform:scale(1)} }
+</style>
+</head>
+<body>
+
+<!-- STRESS BANNER -->
+<div class="stress-banner" id="stressBanner">
+  ⚠️ Customers have stopped coming — Stabilize: Save today · Skip takeout · Pay your supplier
+</div>
+
+<!-- HEADER -->
+<header>
+  <div class="logo">Dough <span>&</span> Dough</div>
+  <div class="header-stats">
+    <div class="hstat coins">🪙 <span class="label">coins</span><span id="hCoins">0</span></div>
+    <div class="hstat savings">💰 <span class="label">saved</span><span id="hSavings">$0</span></div>
+    <div class="day-pill" id="hDay">Day 1</div>
+  </div>
+</header>
+
+<!-- TAB BAR -->
+<div class="tab-bar">
+  <button class="tab-btn active" onclick="showTab('bakery',this)">
+    <span class="tab-icon">🏪</span> Bakery
+  </button>
+  <button class="tab-btn" onclick="showTab('actions',this)">
+    <span class="tab-icon">⚡</span> Actions
+  </button>
+  <button class="tab-btn" onclick="showTab('invest',this)">
+    <span class="tab-icon">🌱</span> Invest
+  </button>
+  <button class="tab-btn" onclick="showTab('supplier',this)">
+    <span class="tab-icon">🤝</span> Supplier
+  </button>
+  <button class="tab-btn" onclick="showTab('missions',this)">
+    <span class="tab-icon">📋</span> Missions
+    <span class="tab-badge" id="missionBadge">0</span>
+  </button>
+  <button class="tab-btn" onclick="showTab('feed',this)">
+    <span class="tab-icon">📜</span> Feed
+  </button>
+</div>
+
+<!-- PANELS -->
+<div class="panels">
+
+  <!-- BAKERY -->
+  <div class="panel active" id="tab-bakery">
+    <div class="bakery-scene">
+      <div class="bakery-title">🥖 Penny's Patisserie</div>
+      <div class="upgrades-row">
+        <div class="upgrade-slot" id="slot-display_shelf">🗄️<span class="slot-label">Display<br>Shelf</span></div>
+        <div class="upgrade-slot" id="slot-coffee_machine">☕<span class="slot-label">Coffee<br>Machine</span></div>
+        <div class="upgrade-slot" id="slot-storm_insurance">🛡️<span class="slot-label">Storm<br>Insurance</span></div>
+        <div class="upgrade-slot" id="slot-second_oven">🔥<span class="slot-label">Second<br>Oven</span></div>
+      </div>
+      <div class="oven-row">
+        <div class="oven-label">🔥 Oven — tap to bake</div>
+        <div class="recipes" id="recipeList"></div>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="section-title">Pantry</div>
+      <div class="pantry-grid">
+        <div class="ingredient-cell">
+          <div class="ingredient-icon" id="icon-flour">🌾</div>
+          <div class="ingredient-qty" id="qty-flour">0</div>
+          <div class="ingredient-name">Flour</div>
+        </div>
+        <div class="ingredient-cell">
+          <div class="ingredient-icon" id="icon-sugar">🍬</div>
+          <div class="ingredient-qty" id="qty-sugar">0</div>
+          <div class="ingredient-name">Sugar</div>
+        </div>
+        <div class="ingredient-cell">
+          <div class="ingredient-icon" id="icon-butter">🧈</div>
+          <div class="ingredient-qty" id="qty-butter">0</div>
+          <div class="ingredient-name">Butter</div>
+        </div>
+        <div class="ingredient-cell">
+          <div class="ingredient-icon" id="icon-strawberries">🍓</div>
+          <div class="ingredient-qty" id="qty-strawberries">0</div>
+          <div class="ingredient-name">Berries</div>
+        </div>
+        <div class="ingredient-cell">
+          <div class="ingredient-icon" id="icon-chocolate">🍫</div>
+          <div class="ingredient-qty" id="qty-chocolate">0</div>
+          <div class="ingredient-name">Choc.</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="card" style="text-align:center">
+      <div class="section-title">Customers Today</div>
+      <div style="font-family:'Fraunces',serif;font-size:2.2rem;font-weight:700;color:var(--amber)" id="customerCount">0</div>
+      <div style="font-size:0.72rem;color:var(--kraft);margin-top:2px">Bake more to attract customers</div>
+    </div>
+  </div>
+
+  <!-- ACTIONS -->
+  <div class="panel" id="tab-actions">
+    <div class="section-title">Financial Actions</div>
+
+    <button class="action-btn green" onclick="openModal('save')">
+      <span class="aicon">💰</span>
+      <div class="atext">
+        Save Money
+        <div class="ahint">Adds flour to your pantry</div>
+      </div>
+    </button>
+
+    <button class="action-btn" onclick="openModal('mindful')">
+      <span class="aicon">🧾</span>
+      <div class="atext">
+        Log a Purchase
+        <div class="ahint">Mindful buys earn coins</div>
+      </div>
+    </button>
+
+    <button class="action-btn green" onclick="openModal('resist')">
+      <span class="aicon">🛡️</span>
+      <div class="atext">
+        Resist a Purchase
+        <div class="ahint">Earn rare strawberries</div>
+      </div>
+    </button>
+
+    <button class="action-btn" onclick="showTab('supplier', document.querySelector('.tab-btn:nth-child(4)'));paySupplier()">
+      <span class="aicon">🤝</span>
+      <div class="atext">
+        Pay Supplier
+        <div class="ahint">Raises your trust score</div>
+      </div>
+    </button>
+
+    <button class="action-btn red" onclick="missPayment()">
+      <span class="aicon">📉</span>
+      <div class="atext">
+        Miss Supplier Payment
+        <div class="ahint">Lowers trust score</div>
+      </div>
+    </button>
+
+    <div style="margin-top:10px">
+      <div class="section-title">End of Day</div>
+      <button class="end-day-btn" onclick="newDay()">🌅 Sleep & Start New Day</button>
+    </div>
+  </div>
+
+  <!-- INVEST -->
+  <div class="panel" id="tab-invest">
+    <div class="starter-hero">
+      <div style="font-size:0.72rem;color:var(--kraft);letter-spacing:2px;text-transform:uppercase;margin-bottom:6px">Sourdough Starter</div>
+      <div class="starter-balance" id="starterBal">$0.00</div>
+      <div class="starter-sub">Grows 2% every night • Like compound interest</div>
+      <div class="starter-input-row">
+        <input class="dark-input" id="investAmt" type="number" placeholder="Coins to invest" min="1">
+        <button class="btn-feed" onclick="invest()">Feed 🌱</button>
+      </div>
+    </div>
+
+    <div class="growth-viz">
+      <div class="section-title">Growth Progress</div>
+      <div class="growth-bar-track">
+        <div class="growth-bar-fill" id="starterBar" style="width:0%"></div>
+      </div>
+      <div class="growth-stats">
+        <div class="gstat">
+          <div class="gstat-label">Current Balance</div>
+          <div class="gstat-val" id="starterBalStat">$0.00</div>
+        </div>
+        <div class="gstat">
+          <div class="gstat-label">Total Earned</div>
+          <div class="gstat-val" id="starterEarned">$0.00</div>
+        </div>
+        <div class="gstat">
+          <div class="gstat-label">Daily Yield</div>
+          <div class="gstat-val" id="starterYield">$0.00</div>
+        </div>
+        <div class="gstat">
+          <div class="gstat-label">Growth Rate</div>
+          <div class="gstat-val">2% / day</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="section-title">How It Works</div>
+      <p style="font-size:0.82rem;color:var(--charcoal);line-height:1.6">
+        The sourdough starter is your <strong>investment account</strong>. Feed it coins, and it grows a little every night while you sleep — just like compound interest in a real investment.<br><br>
+        The more you feed it, the faster it grows. Coins earned flow back to your bakery automatically each morning.
+      </p>
+    </div>
+  </div>
+
+  <!-- SUPPLIER -->
+  <div class="panel" id="tab-supplier">
+    <div class="score-hero">
+      <div style="font-size:0.65rem;color:var(--kraft);letter-spacing:2px;text-transform:uppercase;margin-bottom:4px">Supplier Trust Score</div>
+      <div class="score-num" id="supplierScore">300</div>
+      <div class="score-tier" id="supplierTier">Unknown Vendor</div>
+      <div class="score-bar-track">
+        <div class="score-bar-fill" id="supplierBar" style="width:35%"></div>
+      </div>
+      <div class="score-discount" id="supplierDiscount">No discount yet</div>
+    </div>
+
+    <div class="supplier-btns">
+      <button class="btn-pay-full" onclick="paySupplier()">✅ Pay Bill</button>
+      <button class="btn-miss-full" onclick="missPayment()">✗ Miss Payment</button>
+    </div>
+
+    <div class="card" id="pendingBillCard">
+      <div class="section-title">Pending Bill</div>
+      <div style="font-family:'Fraunces',serif;font-size:1.5rem;font-weight:700;color:var(--rose)" id="pendingBill">$0.00</div>
+      <div style="font-size:0.72rem;color:var(--kraft);margin-top:3px">Accrues as you save and transact</div>
+    </div>
+
+    <div class="tier-ladder">
+      <div class="section-title">Tier Ladder</div>
+      <div id="tierLadder"></div>
+    </div>
+
+    <div class="card">
+      <div class="section-title">What This Teaches</div>
+      <p style="font-size:0.82rem;color:var(--charcoal);line-height:1.6">
+        Your <strong>supplier trust score</strong> works just like a real credit score. Pay on time → score rises → better deals. Miss a payment → score drops → prices go up.<br><br>
+        Higher tiers unlock wholesale ingredient deals, which means your pastries earn more coins — the same way good credit unlocks better loan rates in real life.
+      </p>
+    </div>
+  </div>
+
+  <!-- MISSIONS -->
+  <div class="panel" id="tab-missions">
+    <div class="section-title">Today's Orders</div>
+    <div id="missionList"></div>
+    <button class="missions-reset-btn" onclick="resetMissions()">↺ Reset missions (new day)</button>
+  </div>
+
+  <!-- FEED -->
+  <div class="panel" id="tab-feed">
+    <div class="section-title">Activity Feed</div>
+    <div id="eventFeed">
+      <div class="feed-item">
+        <div class="feed-emoji">🧁</div>
+        <div class="feed-msg">Your bakery is open! Head to Actions to start building good habits.</div>
+      </div>
+    </div>
+  </div>
+
+</div>
+
+<!-- MODAL -->
+<div class="modal-overlay" id="modalOverlay" onclick="maybeClose(event)">
+  <div class="modal">
+    <div class="modal-title" id="modalTitle">Action</div>
+    <input class="modal-input" id="mAmount" type="number" placeholder="Amount ($)" min="0.01" step="0.01" style="display:none">
+    <input class="modal-input" id="mDesc" type="text" placeholder="Description">
+    <div class="impulse-row" id="impulseRow" style="display:none">
+      <input type="checkbox" id="impulseCheck">
+      <label for="impulseCheck">🦝 This was an impulse buy</label>
+    </div>
+    <div class="modal-btns">
+      <button class="btn-confirm" onclick="confirmModal()">Confirm</button>
+      <button class="btn-cancel" onclick="closeModal()">Cancel</button>
+    </div>
+  </div>
+</div>
+
+<div class="toast-wrap" id="toasts"></div>
+
+<script>
+// ── CONSTANTS ──────────────────────────────────────────────────────────────
+const RECIPES = {
+  bread:             { flour:3, sugar:1,            emoji:'🍞', label:'Bread' },
+  croissant:         { flour:2, butter:2,            emoji:'🥐', label:'Croissant' },
+  'strawberry tart': { flour:1, sugar:2, strawberries:3, emoji:'🍓', label:'S. Tart' },
+  'chocolate cake':  { flour:2, sugar:2, chocolate:3,   emoji:'🎂', label:'Choc. Cake' },
+};
+const UPGRADES = [
+  { key:'display_shelf',   cost:10,  emoji:'🗄️' },
+  { key:'coffee_machine',  cost:50,  emoji:'☕' },
+  { key:'storm_insurance', cost:100, emoji:'🛡️' },
+  { key:'second_oven',     cost:300, emoji:'🔥' },
+];
+const TIERS = [
+  { min:0,   name:'Unknown',    discount:0,    perk:'No perks yet' },
+  { min:200, name:'Acquainted', discount:0.05, perk:'5% coin bonus on bakes' },
+  { min:400, name:'Trusted',    discount:0.10, perk:'10% bonus + wholesale chocolate' },
+  { min:600, name:'Preferred',  discount:0.15, perk:'15% bonus + wholesale strawberries' },
+  { min:800, name:'Partner',    discount:0.20, perk:'20% bonus + wholesale butter' },
+];
+const MISSIONS = [
+  { id:'m1', desc:'No takeout today',         reward:'+2 🍓 strawberries', ingredient:'strawberries', amt:2, coins:0 },
+  { id:'m2', desc:'Transfer $5 to savings',   reward:'+1 🧈 butter, +5 coins', ingredient:'butter', amt:1, coins:5 },
+  { id:'m3', desc:'Check your balance',        reward:'+3 coins',           ingredient:null, amt:0, coins:3 },
+  { id:'m4', desc:'Resist one impulse buy',    reward:'+1 🍫 chocolate',    ingredient:'chocolate', amt:1, coins:0 },
+  { id:'m5', desc:'Pay your supplier on time', reward:'+10 coins',          ingredient:null, amt:0, coins:10 },
+];
+
+// ── STATE ──────────────────────────────────────────────────────────────────
+let S = {
+  day:1, coins:0, savings:0, customersToday:0, stressMode:false,
+  ingredients:{ flour:0, sugar:0, butter:0, strawberries:0, chocolate:0 },
+  unlockedRecipes:['bread'], upgrades:[],
+  starter:{ balance:0, totalEarned:0 },
+  supplier:{ score:300, pendingBill:0, paymentsMade:0, paymentsMissed:0 },
+  missions: MISSIONS.map(m => ({...m, done:false})),
+};
+let currentModal = null;
+
+// ── TABS ───────────────────────────────────────────────────────────────────
+function showTab(id, btn) {
+  document.querySelectorAll('.panel').forEach(p => p.classList.remove('active'));
+  document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+  document.getElementById('tab-' + id).classList.add('active');
+  if (btn) btn.classList.add('active');
+  else document.querySelector(`[onclick*="'${id}'"]`)?.classList.add('active');
+}
+
+// ── RENDER ─────────────────────────────────────────────────────────────────
+function render() {
+  // Header
+  bump('hCoins', S.coins);
+  document.getElementById('hSavings').textContent = '$' + S.savings.toFixed(0);
+  document.getElementById('hDay').textContent = 'Day ' + S.day;
+
+  // Stress
+  document.getElementById('stressBanner').style.display = S.stressMode ? 'block' : 'none';
+
+  // Bakery tab
+  document.getElementById('customerCount').textContent = S.customersToday;
+  UPGRADES.forEach(u => {
+    document.getElementById('slot-' + u.key).classList.toggle('active', S.upgrades.includes(u.key));
+  });
+  const rl = document.getElementById('recipeList');
+  rl.innerHTML = '';
+  S.unlockedRecipes.forEach(r => {
+    const c = document.createElement('div');
+    c.className = 'recipe-chip';
+    c.innerHTML = RECIPES[r].emoji + ' ' + RECIPES[r].label;
+    c.onclick = () => bake(r);
+    rl.appendChild(c);
+  });
+
+  // Pantry
+  Object.entries(S.ingredients).forEach(([k,v]) => {
+    document.getElementById('qty-' + k).textContent = v;
+  });
+
+  // Starter
+  document.getElementById('starterBal').textContent = '$' + S.starter.balance.toFixed(2);
+  document.getElementById('starterBalStat').textContent = '$' + S.starter.balance.toFixed(2);
+  document.getElementById('starterEarned').textContent = '$' + S.starter.totalEarned.toFixed(2);
+  document.getElementById('starterYield').textContent = '$' + (S.starter.balance * 0.02).toFixed(2);
+  const starterPct = Math.min(100, (S.starter.balance / 500) * 100);
+  document.getElementById('starterBar').style.width = starterPct + '%';
+
+  // Supplier
+  const tier = getTier();
+  bump('supplierScore', S.supplier.score);
+  document.getElementById('supplierTier').textContent = tier.name;
+  document.getElementById('supplierDiscount').textContent =
+    tier.discount > 0 ? `${(tier.discount*100).toFixed(0)}% coin bonus on every bake` : 'No discount yet';
+  const pct = Math.min(100, (S.supplier.score / 850) * 100);
+  document.getElementById('supplierBar').style.width = pct + '%';
+  document.getElementById('pendingBill').textContent = '$' + S.supplier.pendingBill.toFixed(2);
+
+  // Tier ladder
+  const ladder = document.getElementById('tierLadder');
+  ladder.innerHTML = '';
+  TIERS.forEach(t => {
+    const isCurrent = getTier().min === t.min;
+    const isAchieved = S.supplier.score >= t.min;
+    const el = document.createElement('div');
+    el.className = 'tier-step' + (isCurrent?' current':'') + (isAchieved && !isCurrent?' achieved':'');
+    el.innerHTML = `
+      <div class="tier-dot"></div>
+      <div style="flex:1">
+        <div class="tier-name">${t.name} <span style="color:var(--kraft);font-size:0.7rem">(${t.min}+)</span></div>
+        <div class="tier-perk">${t.perk}</div>
+      </div>
+    `;
+    ladder.appendChild(el);
+  });
+
+  // Missions
+  const ml = document.getElementById('missionList');
+  ml.innerHTML = '';
+  S.missions.forEach(m => {
+    const el = document.createElement('div');
+    el.className = 'mission-card' + (m.done ? ' done' : '');
+    el.innerHTML = `
+      <div class="mission-check">${m.done ? '✓' : ''}</div>
+      <div class="mission-body">
+        <div class="mission-desc">${m.desc}</div>
+        <div class="mission-reward">${m.reward}</div>
+      </div>
+    `;
+    if (!m.done) el.onclick = () => completeMission(m.id);
+    ml.appendChild(el);
+  });
+
+  // Mission badge
+  const remaining = S.missions.filter(m => !m.done).length;
+  const badge = document.getElementById('missionBadge');
+  badge.textContent = remaining;
+  badge.classList.toggle('visible', remaining > 0);
+}
+
+function bump(id, val) {
+  const el = document.getElementById(id);
+  if (!el) return;
+  el.textContent = val;
+  el.classList.remove('bump');
+  void el.offsetWidth;
+  el.classList.add('bump');
+}
+
+function getTier() {
+  let t = TIERS[0];
+  for (const x of TIERS) { if (S.supplier.score >= x.min) t = x; }
+  return t;
+}
+
+function popIngredient(key) {
+  const el = document.getElementById('icon-' + key);
+  if (!el) return;
+  el.classList.remove('pop');
+  void el.offsetWidth;
+  el.classList.add('pop');
+}
+
+// ── EVENTS ─────────────────────────────────────────────────────────────────
+function addEvent(type, emoji, msg) {
+  const feed = document.getElementById('eventFeed');
+  const el = document.createElement('div');
+  el.className = 'feed-item ' + type;
+  el.innerHTML = `<div class="feed-emoji">${emoji}</div><div class="feed-msg">${msg}</div>`;
+  feed.insertBefore(el, feed.firstChild);
+  while (feed.children.length > 30) feed.removeChild(feed.lastChild);
+}
+
+function toast(msg) {
+  const w = document.getElementById('toasts');
+  const t = document.createElement('div');
+  t.className = 'toast';
+  t.textContent = msg;
+  w.appendChild(t);
+  setTimeout(() => t.remove(), 3100);
+}
+
+// ── GAME ACTIONS ───────────────────────────────────────────────────────────
+function saveMoney(amount) {
+  S.savings += amount;
+  const flour = Math.floor(amount);
+  S.ingredients.flour += flour;
+  S.supplier.pendingBill = +(S.supplier.pendingBill + amount * 0.1).toFixed(2);
+  popIngredient('flour');
+  checkUpgrades(); checkRecipeUnlocks(); checkStress();
+  addEvent('save', '💰', `Saved $${amount.toFixed(2)} → +${flour} flour. Total savings: $${S.savings.toFixed(2)}`);
+  toast(`💰 Saved $${amount.toFixed(2)}`);
+  render();
+}
+
+function logPurchase(desc, amount, isImpulse) {
+  if (isImpulse) {
+    const lost = Math.min(Math.floor(amount / 5), S.ingredients.flour);
+    S.ingredients.flour -= lost;
+    popIngredient('flour');
+    checkStress();
+    addEvent('impulse_buy', '🦝', `Raccoon stole your flour! ($${amount.toFixed(2)} impulse: ${desc}) −${lost} flour.`);
+    toast(`🦝 −${lost} flour stolen!`);
+  } else {
+    const coins = Math.floor(amount * 0.1);
+    S.coins += coins;
+    addEvent('mindful_buy', '✔️', `Mindful buy: ${desc} ($${amount.toFixed(2)}) → +${coins} coins.`);
+    toast(`✔️ Logged: ${desc}`);
+  }
+  render();
+}
+
+function resistPurchase(desc) {
+  S.ingredients.strawberries += 2;
+  popIngredient('strawberries');
+  checkRecipeUnlocks();
+  addEvent('resist', '🛡️', `Resisted '${desc}'! +2 strawberries.`);
+  toast('🛡️ Dough stockpile protected!');
+  render();
+}
+
+function bake(recipe) {
+  const rec = RECIPES[recipe];
+  for (const [ing, qty] of Object.entries(rec)) {
+    if (ing === 'emoji' || ing === 'label') continue;
+    if ((S.ingredients[ing] || 0) < qty) { toast(`❌ Not enough ${ing}`); return; }
+  }
+  for (const [ing, qty] of Object.entries(rec)) {
+    if (ing === 'emoji' || ing === 'label') continue;
+    S.ingredients[ing] -= qty;
+  }
+  const base = 5 + S.upgrades.length * 2;
+  const bonus = Math.floor(base * getTier().discount);
+  const earned = base + bonus;
+  S.coins += earned; S.customersToday++;
+  addEvent('bake', rec.emoji, `Baked ${rec.label}! +${earned} coins (supplier bonus: +${bonus}). Customers: ${S.customersToday}`);
+  toast(`${rec.emoji} +${earned} coins!`);
+  render();
+}
+
+function invest() {
+  const amount = parseFloat(document.getElementById('investAmt').value);
+  if (!amount || amount <= 0) { toast('Enter a valid amount'); return; }
+  if (Math.floor(amount) > S.coins) { toast('❌ Not enough coins'); return; }
+  S.coins -= Math.floor(amount);
+  S.starter.balance = +(S.starter.balance + amount).toFixed(2);
+  addEvent('invest', '🌱', `Fed starter $${amount.toFixed(2)}. Balance: $${S.starter.balance.toFixed(2)}`);
+  toast(`🌱 Starter balance: $${S.starter.balance.toFixed(2)}`);
+  document.getElementById('investAmt').value = '';
+  render();
+}
+
+function paySupplier() {
+  if (S.supplier.pendingBill <= 0) { toast('No pending bill'); return; }
+  const oldTier = getTier().name;
+  S.supplier.score = Math.min(850, S.supplier.score + 20);
+  S.supplier.paymentsMade++;
+  S.supplier.pendingBill = 0;
+  const newTier = getTier();
+  if (newTier.name !== oldTier) {
+    const unlockMap = { Trusted:'chocolate', Preferred:'strawberries', Partner:'butter' };
+    const bonus = unlockMap[newTier.name];
+    if (bonus) {
+      S.ingredients[bonus] += 3;
+      popIngredient(bonus);
+      addEvent('upgrade', '🎁', `Tier up: ${newTier.name}! Wholesale ${bonus} deal → +3 ${bonus}.`);
+    }
+    toast(`🎉 Supplier tier: ${newTier.name}!`);
+  }
+  checkRecipeUnlocks();
+  addEvent('pay_supplier', '🤝', `Paid supplier on time! Trust: ${S.supplier.score}. Tier: ${newTier.name}`);
+  toast(`🤝 Trust score: ${S.supplier.score}`);
+  render();
+}
+
+function missPayment() {
+  S.supplier.score = Math.max(300, S.supplier.score - 50);
+  S.supplier.paymentsMissed++;
+  addEvent('miss_payment', '📉', `Missed payment. Trust dropped to ${S.supplier.score}.`);
+  toast(`📉 Score: ${S.supplier.score}`);
+  render();
+}
+
+function completeMission(id) {
+  const m = S.missions.find(x => x.id === id);
+  if (!m || m.done) return;
+  m.done = true;
+  if (m.ingredient) { S.ingredients[m.ingredient] += m.amt; popIngredient(m.ingredient); checkRecipeUnlocks(); }
+  S.coins += m.coins;
+  addEvent('mission_done', '✅', `'${m.desc}' complete! ${m.reward}`);
+  toast('✅ Mission complete!');
+  render();
+}
+
+function resetMissions() {
+  S.missions.forEach(m => m.done = false);
+  toast('📋 Missions reset!');
+  render();
+}
+
+function newDay() {
+  S.day++; S.customersToday = 0;
+  const earned = +(S.starter.balance * 0.02).toFixed(2);
+  S.starter.balance = +(S.starter.balance + earned).toFixed(2);
+  S.starter.totalEarned = +(S.starter.totalEarned + earned).toFixed(2);
+  S.coins += Math.floor(earned);
+  addEvent('invest', '📈', `Starter grew: +$${earned.toFixed(2)} (2% compound). Balance: $${S.starter.balance.toFixed(2)}`);
+  const passive = S.upgrades.length * 2;
+  if (passive > 0) { S.coins += passive; addEvent('upgrade', '🏪', `Passive income: +${passive} coins from upgrades.`); }
+  S.missions.forEach(m => m.done = false);
+  checkStress();
+  toast(`🌅 Day ${S.day} begins! Starter: +$${earned.toFixed(2)}`);
+  render();
+}
+
+// ── CHECKS ─────────────────────────────────────────────────────────────────
+function checkUpgrades() {
+  UPGRADES.forEach(u => {
+    if (!S.upgrades.includes(u.key) && S.savings >= u.cost) {
+      S.upgrades.push(u.key);
+      addEvent('upgrade', '🏪', `Upgrade unlocked: ${u.key.replace(/_/g,' ')} ($${u.cost} saved)`);
+      toast(`🏪 Unlocked: ${u.key.replace(/_/g,' ')}`);
+    }
+  });
+}
+function checkRecipeUnlocks() {
+  const map = { butter:'croissant', strawberries:'strawberry tart', chocolate:'chocolate cake' };
+  Object.entries(map).forEach(([ing, recipe]) => {
+    if (S.ingredients[ing] >= 2 && !S.unlockedRecipes.includes(recipe)) {
+      S.unlockedRecipes.push(recipe);
+      addEvent('mission_done', '📖', `Recipe unlocked: ${RECIPES[recipe].label}!`);
+      toast(`📖 Unlocked: ${RECIPES[recipe].label}!`);
+    }
+  });
+}
+function checkStress() {
+  const was = S.stressMode;
+  S.stressMode = S.ingredients.flour < 3 && S.coins < 10;
+  if (S.stressMode && !was) {
+    addEvent('stress', '⚠️', 'Customers stopped coming. Stabilize: Save · Skip takeout · Pay supplier.');
+  }
+}
+
+// ── MODAL ──────────────────────────────────────────────────────────────────
+function openModal(type) {
+  currentModal = type;
+  const amt = document.getElementById('mAmount');
+  const desc = document.getElementById('mDesc');
+  const ir = document.getElementById('impulseRow');
+  amt.style.display = 'none'; ir.style.display = 'none';
+  document.getElementById('impulseCheck').checked = false;
+  amt.value = ''; desc.value = '';
+
+  if (type === 'save') {
+    document.getElementById('modalTitle').textContent = '💰 Save Money';
+    amt.placeholder = 'Amount to save ($)';
+    desc.placeholder = 'Note (optional)';
+    amt.style.display = 'block';
+  } else if (type === 'mindful') {
+    document.getElementById('modalTitle').textContent = '🧾 Log a Purchase';
+    amt.placeholder = 'Amount spent ($)';
+    desc.placeholder = 'What did you buy?';
+    amt.style.display = 'block'; ir.style.display = 'flex';
+  } else if (type === 'resist') {
+    document.getElementById('modalTitle').textContent = '🛡️ Resist a Purchase';
+    desc.placeholder = 'What did you resist buying?';
+  }
+  document.getElementById('modalOverlay').classList.add('open');
+  setTimeout(() => (amt.style.display !== 'none' ? amt : desc).focus(), 50);
+}
+
+function maybeClose(e) { if (e.target === document.getElementById('modalOverlay')) closeModal(); }
+function closeModal() { document.getElementById('modalOverlay').classList.remove('open'); currentModal = null; }
+
+function confirmModal() {
+  const amount = parseFloat(document.getElementById('mAmount').value);
+  const desc   = document.getElementById('mDesc').value.trim() || 'unnamed';
+  const impulse = document.getElementById('impulseCheck').checked;
+  if (currentModal === 'save') {
+    if (!amount || amount <= 0) { toast('Enter a valid amount'); return; }
+    saveMoney(amount);
+  } else if (currentModal === 'mindful') {
+    if (!amount || amount <= 0) { toast('Enter a valid amount'); return; }
+    logPurchase(desc, amount, impulse);
+  } else if (currentModal === 'resist') {
+    resistPurchase(desc || 'a temptation');
+  }
+  closeModal();
+}
+
+document.addEventListener('keydown', e => {
+  if (e.key === 'Escape') closeModal();
+  if (e.key === 'Enter' && currentModal) confirmModal();
+});
+
+// ── INIT ───────────────────────────────────────────────────────────────────
+render();
+</script>
+</body>
+</html>
