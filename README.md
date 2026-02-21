@@ -32,4 +32,4 @@ Clone the repository:
 git clone <repo-url>
 cd PearlHacks2026
 
-Open index.html in your browser and that’s it!
+
