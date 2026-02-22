@@ -1,10 +1,10 @@
-# PearlHacks2026 - Credit Cafe Score
+# PearlHacks2026 - Dough & Dough
 
 # Inspiration
-Financial literacy often feels intimdidating, especially for students and young adults as they start making financial decisions. We wanted to make learning abot credit scores, loans, and financial decision making fun and interactive! What is managing credit felt like running a bakery? That's how Credit Cafe Score was born, a game where financial decisions directly imapct bussiness growth.
+Financial literacy often feels intimdidating, especially for students and young adults as they start making financial decisions. We wanted to make learning abot credit scores, loans, and financial decision making fun and interactive! What is managing credit felt like running a bakery? That's how Dough & Dough was born, a game where financial decisions directly imapct bussiness growth.
 
 # What It Does
-Credit Score Café is an interactive browser-based game where players:
+Dough & Dough is an interactive browser-based game where players:
 - Bake bakery items (muffins, cakes, toast)
 - Manage ingredient inventory
 - Earn revenue from sales
@@ -32,4 +32,4 @@ Clone the repository:
 git clone <repo-url>
 cd PearlHacks2026
 
-Open index.html in your browser and that’s it!
+
