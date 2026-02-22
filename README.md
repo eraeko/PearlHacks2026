@@ -5,7 +5,7 @@ Financial literacy often feels intimdidating, especially for students and young 
 
 # What It Does
 Dough & Dough is an interactive browser-based game where players:
-- Bake bakery items (muffins, cakes, toast)
+- Bake bakery items (muffins, cakes, croissiants)
 - Manage ingredient inventory
 - Earn revenue from sales
 - Make decisions about using cash vs credit
