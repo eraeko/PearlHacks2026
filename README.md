@@ -22,9 +22,8 @@ Core Mechanics
 The game visually demonstrates how financial behavior impacts long-term success.
 
 # How We Built It
-HTML – Structure
 CSS – Styling & layout
-JavaScript – Game logic and interactivity
+JavaScript/React – Game logic and interactivity
 GitHub – Version control & collaboration
 
 # How to Run It Locally
