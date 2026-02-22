@@ -75,6 +75,13 @@ const getLoanRate   = (s) => s >= 740 ? 0.06 : s >= 670 ? 0.10 : s >= 580 ? 0.18
 // ═══════════════════════════════════════════════════════════
 
 export default function BakeryApp() {
+  const [screen, setScreen] = useState("home"); // "home" | "game"
+  if (screen === "home") return <HomePage onPlay={() => setScreen("game")} />;
+
+  return <BakeryGame />;
+}
+
+function BakeryGame() {
   // Bakery state
   const [coins, setCoins]             = useState(20);
   const [flour, setFlour]             = useState(18);
@@ -1007,6 +1014,521 @@ export default function BakeryApp() {
         button:active { transform: scale(0.97); }
         ::-webkit-scrollbar { width: 4px; }
         ::-webkit-scrollbar-thumb { background: rgba(180,83,9,0.3); border-radius: 4px; }
+      `}</style>
+    </div>
+  );
+}
+
+// ═══════════════════════════════════════════════════════════
+//  HOME PAGE
+// ═══════════════════════════════════════════════════════════
+
+function HomePage({ onPlay }) {
+  const [hoveredFeature, setHoveredFeature] = useState(null);
+  const [floatingIdx, setFloatingIdx] = useState(0);
+
+  const floatingPastries = ["🧁","🍞","🥐","🍩","🎂","🪷","🫐","🍰","🥖","🧇"];
+  useEffect(() => {
+    const t = setInterval(() => setFloatingIdx(i => (i + 1) % floatingPastries.length), 1800);
+    return () => clearInterval(t);
+  }, []);
+
+  const features = [
+    {
+      icon: "🧁",
+      title: "Bake & Earn",
+      desc: "Run a real bakery. Choose recipes, manage flour, unlock upgrades, and grow from a tiny shed to a city institution.",
+      color: "#b45309",
+      bg: "rgba(180,83,9,0.08)",
+      border: "rgba(180,83,9,0.25)",
+    },
+    {
+      icon: "💳",
+      title: "Credit Score Café",
+      desc: "Every financial decision shapes your credit score. Pay suppliers on time, manage debt, and unlock lower loan rates.",
+      color: "#16a34a",
+      bg: "rgba(22,163,74,0.08)",
+      border: "rgba(22,163,74,0.25)",
+    },
+    {
+      icon: "📈",
+      title: "Sourdough Investing",
+      desc: "Feed your starter coins and watch them compound passively — just like an index fund. Start early, earn forever.",
+      color: "#65a30d",
+      bg: "rgba(101,163,13,0.08)",
+      border: "rgba(101,163,13,0.25)",
+    },
+    {
+      icon: "🦝",
+      title: "Real-World Temptations",
+      desc: "Impulse buys, raccoon raids, market crashes, and surprise events test your financial discipline every single day.",
+      color: "#c2410c",
+      bg: "rgba(194,65,12,0.08)",
+      border: "rgba(194,65,12,0.25)",
+    },
+    {
+      icon: "📋",
+      title: "Mission-Based Learning",
+      desc: "Daily missions like 'resist an impulse buy' or 'keep credit under 30%' reward good financial habits with real in-game power.",
+      color: "#7c3aed",
+      bg: "rgba(124,58,237,0.08)",
+      border: "rgba(124,58,237,0.25)",
+    },
+    {
+      icon: "🌍",
+      title: "Real-World Impact",
+      desc: "See how your credit score affects mortgages, car loans, and apartment rentals — with exact numbers, side by side.",
+      color: "#0369a1",
+      bg: "rgba(3,105,161,0.08)",
+      border: "rgba(3,105,161,0.25)",
+    },
+  ];
+
+  const howItWorks = [
+    { step: "01", icon: "🛒", title: "Buy ingredients", desc: "Pay cash or charge to your credit limit. Every choice affects your utilization score." },
+    { step: "02", icon: "🔥", title: "Bake & sell", desc: "Choose recipes strategically. Unlock premium items as you complete financial missions." },
+    { step: "03", icon: "💳", title: "Manage your credit", desc: "Pay supplier bills on time, keep utilization low, and watch your score climb." },
+    { step: "04", icon: "🌅", title: "End the day", desc: "Collect revenue, face random events, and see how your habits shape tomorrow." },
+  ];
+
+  const creditBands = [
+    { range: "800+", label: "Exceptional", color: "#16a34a", perk: "6% loan rate · Best apartment", icon: "👑" },
+    { range: "740+", label: "Very Good",   color: "#65a30d", perk: "10% loan rate · Easy approvals", icon: "✨" },
+    { range: "670+", label: "Good",        color: "#b45309", perk: "18% loan rate · Most loans OK", icon: "🔥" },
+    { range: "580+", label: "Fair",        color: "#c2410c", perk: "25% loan rate · Higher deposits", icon: "🌡️" },
+    { range: "<580", label: "Poor",        color: "#b91c1c", perk: "Loans denied · Missed payments", icon: "🪦" },
+  ];
+
+  return (
+    <div style={{
+      minHeight: "100vh",
+      background: "linear-gradient(160deg, #fef8ed 0%, #fce8c0 40%, #f5d5a0 100%)",
+      fontFamily: "'Georgia', serif",
+      color: "#3d2b1f",
+      overflowX: "hidden",
+    }}>
+
+      {/* ── DECORATIVE FLOATING PASTRIES (background) ── */}
+      <div style={{ position: "fixed", inset: 0, pointerEvents: "none", zIndex: 0, overflow: "hidden" }}>
+        {[
+          { top: "8%",  left: "4%",  size: 28, delay: "0s",   dur: "6s"  },
+          { top: "15%", left: "88%", size: 22, delay: "0.8s", dur: "7s"  },
+          { top: "35%", left: "92%", size: 18, delay: "1.4s", dur: "5.5s"},
+          { top: "55%", left: "6%",  size: 24, delay: "2s",   dur: "8s"  },
+          { top: "72%", left: "85%", size: 20, delay: "0.3s", dur: "6.5s"},
+          { top: "88%", left: "12%", size: 16, delay: "1.8s", dur: "7.5s"},
+          { top: "78%", left: "50%", size: 14, delay: "2.5s", dur: "9s"  },
+          { top: "25%", left: "48%", size: 12, delay: "3s",   dur: "5s"  },
+        ].map((p, i) => (
+          <div key={i} style={{
+            position: "absolute", top: p.top, left: p.left,
+            fontSize: p.size, opacity: 0.12,
+            animation: `floatBob ${p.dur} ease-in-out infinite`,
+            animationDelay: p.delay,
+          }}>
+            {floatingPastries[(i * 3) % floatingPastries.length]}
+          </div>
+        ))}
+      </div>
+
+      {/* ── NAV ── */}
+      <nav style={{
+        position: "sticky", top: 0, zIndex: 50,
+        background: "rgba(42,18,4,0.97)",
+        padding: "12px 24px",
+        display: "flex", justifyContent: "space-between", alignItems: "center",
+        boxShadow: "0 3px 20px rgba(0,0,0,0.35)",
+      }}>
+        <div style={{ display: "flex", alignItems: "center", gap: 10 }}>
+          <span style={{ fontSize: 24 }}>🧁</span>
+          <div>
+            <div style={{ fontSize: 17, fontWeight: "bold", color: "#f5c842", letterSpacing: "-0.3px" }}>Dough & Dough</div>
+            <div style={{ fontSize: 9, color: "#c8a96a", letterSpacing: 1.5, textTransform: "uppercase" }}>Finance through baking</div>
+          </div>
+        </div>
+        <button onClick={onPlay} style={{
+          padding: "9px 22px",
+          background: "#f5c842",
+          border: "none", borderRadius: 10,
+          fontWeight: "bold", fontSize: 13, color: "#3d2b1f",
+          cursor: "pointer", fontFamily: "'Georgia', serif",
+          boxShadow: "0 4px 14px rgba(245,200,66,0.4)",
+          transition: "transform 0.15s, box-shadow 0.15s",
+        }}
+          onMouseEnter={e => { e.currentTarget.style.transform = "translateY(-2px)"; e.currentTarget.style.boxShadow = "0 8px 20px rgba(245,200,66,0.5)"; }}
+          onMouseLeave={e => { e.currentTarget.style.transform = "none"; e.currentTarget.style.boxShadow = "0 4px 14px rgba(245,200,66,0.4)"; }}
+        >
+          Play Now →
+        </button>
+      </nav>
+
+      <div style={{ position: "relative", zIndex: 1 }}>
+
+        {/* ── HERO ── */}
+        <section style={{
+          maxWidth: 720, margin: "0 auto",
+          padding: "72px 24px 56px",
+          textAlign: "center",
+        }}>
+          {/* Animated score meter as hero visual */}
+          <div style={{
+            display: "inline-flex", alignItems: "center", gap: 14,
+            background: "rgba(255,255,255,0.7)",
+            border: "2px solid #d4a96a",
+            borderRadius: 20, padding: "14px 28px",
+            marginBottom: 36,
+            boxShadow: "0 8px 30px rgba(180,83,9,0.12)",
+            animation: "fadeSlideUp 0.7s ease both",
+          }}>
+            <span style={{ fontSize: 32 }}>🧁</span>
+            <div style={{ textAlign: "left" }}>
+              <div style={{ fontSize: 10, color: "#6b4c2a", letterSpacing: 1.5, textTransform: "uppercase" }}>Your bakery · Your credit score</div>
+              <div style={{ fontSize: 13, color: "#3d2b1f", marginTop: 2 }}>
+                <span style={{ color: "#b45309", fontWeight: "bold" }}>Bake bread.</span>
+                {" "}
+                <span style={{ color: "#16a34a", fontWeight: "bold" }}>Build credit.</span>
+                {" "}
+                <span style={{ color: "#7c3aed", fontWeight: "bold" }}>Learn money.</span>
+              </div>
+            </div>
+          </div>
+
+          <h1 style={{
+            fontSize: "clamp(38px, 8vw, 68px)",
+            fontWeight: "900",
+            lineHeight: 1.05,
+            margin: "0 0 20px",
+            color: "#2d1a06",
+            letterSpacing: "-2px",
+            animation: "fadeSlideUp 0.7s 0.1s ease both",
+          }}>
+            The bakery that
+            <br />
+            <span style={{
+              background: "linear-gradient(135deg, #b45309, #f5c842, #b45309)",
+              WebkitBackgroundClip: "text",
+              WebkitTextFillColor: "transparent",
+              backgroundClip: "text",
+            }}>
+              teaches real finance
+            </span>
+          </h1>
+
+          <p style={{
+            fontSize: "clamp(15px, 2.5vw, 19px)",
+            color: "#6b4c2a",
+            lineHeight: 1.7,
+            maxWidth: 520, margin: "0 auto 40px",
+            animation: "fadeSlideUp 0.7s 0.2s ease both",
+          }}>
+            Run a growing bakery where every real financial habit — paying on time, keeping debt low, building an emergency fund — makes you a <em>better</em> baker.
+          </p>
+
+          {/* CTA buttons */}
+          <div style={{ display: "flex", gap: 14, justifyContent: "center", flexWrap: "wrap", animation: "fadeSlideUp 0.7s 0.3s ease both" }}>
+            <button onClick={onPlay} style={{
+              padding: "16px 40px",
+              background: "linear-gradient(135deg, #d97706, #b45309)",
+              border: "none", borderRadius: 16,
+              fontWeight: "bold", fontSize: 17, color: "#fff",
+              cursor: "pointer", fontFamily: "'Georgia', serif",
+              boxShadow: "0 8px 28px rgba(180,83,9,0.4)",
+              transition: "transform 0.15s, box-shadow 0.15s",
+            }}
+              onMouseEnter={e => { e.currentTarget.style.transform = "translateY(-3px)"; e.currentTarget.style.boxShadow = "0 14px 36px rgba(180,83,9,0.5)"; }}
+              onMouseLeave={e => { e.currentTarget.style.transform = "none"; e.currentTarget.style.boxShadow = "0 8px 28px rgba(180,83,9,0.4)"; }}
+            >
+              🧁 Open Your Bakery
+            </button>
+            <a href="#how-it-works" style={{
+              padding: "16px 36px",
+              background: "rgba(255,255,255,0.7)",
+              border: "2px solid #d4a96a",
+              borderRadius: 16,
+              fontWeight: "bold", fontSize: 17, color: "#6b4c2a",
+              cursor: "pointer", fontFamily: "'Georgia', serif",
+              textDecoration: "none",
+              display: "inline-block",
+            }}>
+              How it works ↓
+            </a>
+          </div>
+
+          {/* Stats row */}
+          <div style={{
+            display: "flex", justifyContent: "center", gap: 32,
+            marginTop: 56, flexWrap: "wrap",
+            animation: "fadeSlideUp 0.7s 0.4s ease both",
+          }}>
+            {[
+              { val: "6", label: "Recipes to unlock", icon: "🧁" },
+              { val: "8", label: "Bakery upgrades",   icon: "🔧" },
+              { val: "10", label: "Daily missions",   icon: "📋" },
+              { val: "1", label: "Credit score that matters", icon: "💳" },
+            ].map((s, i) => (
+              <div key={i} style={{ textAlign: "center" }}>
+                <div style={{ fontSize: 22 }}>{s.icon}</div>
+                <div style={{ fontSize: 28, fontWeight: "900", color: "#b45309", lineHeight: 1.1 }}>{s.val}</div>
+                <div style={{ fontSize: 11, color: "#6b4c2a" }}>{s.label}</div>
+              </div>
+            ))}
+          </div>
+        </section>
+
+        {/* ── DIVIDER ── */}
+        <div style={{ textAlign: "center", fontSize: 24, letterSpacing: 8, color: "#d4a96a", margin: "8px 0" }}>
+          · · ·
+        </div>
+
+        {/* ── HOW IT WORKS ── */}
+        <section id="how-it-works" style={{ maxWidth: 720, margin: "0 auto", padding: "56px 24px" }}>
+          <div style={{ textAlign: "center", marginBottom: 40 }}>
+            <div style={{ fontSize: 11, color: "#b45309", letterSpacing: 2, textTransform: "uppercase", fontWeight: "bold", marginBottom: 8 }}>The Game Loop</div>
+            <h2 style={{ fontSize: "clamp(24px, 5vw, 38px)", fontWeight: "900", margin: 0, color: "#2d1a06", letterSpacing: "-1px" }}>Four steps. Every single day.</h2>
+          </div>
+
+          <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(280px, 1fr))", gap: 14 }}>
+            {howItWorks.map((step, i) => (
+              <div key={i} style={{
+                background: "rgba(255,255,255,0.7)",
+                border: "1.5px solid #d4a96a",
+                borderRadius: 18, padding: "22px 20px",
+                display: "flex", gap: 16, alignItems: "flex-start",
+                animation: `fadeSlideUp 0.6s ${0.1 * i}s ease both`,
+                boxShadow: "0 4px 16px rgba(180,83,9,0.07)",
+              }}>
+                <div style={{ flexShrink: 0 }}>
+                  <div style={{ fontSize: 9, fontWeight: "900", color: "#d4a96a", letterSpacing: 1, marginBottom: 4 }}>{step.step}</div>
+                  <div style={{ fontSize: 36, lineHeight: 1 }}>{step.icon}</div>
+                </div>
+                <div>
+                  <div style={{ fontSize: 15, fontWeight: "bold", color: "#3d2b1f", marginBottom: 6 }}>{step.title}</div>
+                  <div style={{ fontSize: 12, color: "#6b4c2a", lineHeight: 1.6 }}>{step.desc}</div>
+                </div>
+              </div>
+            ))}
+          </div>
+        </section>
+
+        {/* ── FEATURES GRID ── */}
+        <section style={{
+          background: "rgba(42,18,4,0.04)",
+          borderTop: "1px solid #d4a96a44",
+          borderBottom: "1px solid #d4a96a44",
+        }}>
+          <div style={{ maxWidth: 720, margin: "0 auto", padding: "56px 24px" }}>
+            <div style={{ textAlign: "center", marginBottom: 40 }}>
+              <div style={{ fontSize: 11, color: "#b45309", letterSpacing: 2, textTransform: "uppercase", fontWeight: "bold", marginBottom: 8 }}>Features</div>
+              <h2 style={{ fontSize: "clamp(24px, 5vw, 38px)", fontWeight: "900", margin: 0, color: "#2d1a06", letterSpacing: "-1px" }}>
+                Everything baked in.
+              </h2>
+            </div>
+
+            <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(200px, 1fr))", gap: 12 }}>
+              {features.map((f, i) => (
+                <div key={i}
+                  onMouseEnter={() => setHoveredFeature(i)}
+                  onMouseLeave={() => setHoveredFeature(null)}
+                  style={{
+                    background: hoveredFeature === i ? f.bg : "rgba(255,255,255,0.55)",
+                    border: `1.5px solid ${hoveredFeature === i ? f.border : "#d4a96a44"}`,
+                    borderRadius: 16, padding: "20px 18px",
+                    cursor: "default",
+                    transition: "all 0.25s ease",
+                    boxShadow: hoveredFeature === i ? `0 8px 24px ${f.color}18` : "none",
+                    transform: hoveredFeature === i ? "translateY(-3px)" : "none",
+                  }}>
+                  <div style={{ fontSize: 32, marginBottom: 10 }}>{f.icon}</div>
+                  <div style={{ fontSize: 14, fontWeight: "bold", color: hoveredFeature === i ? f.color : "#3d2b1f", marginBottom: 6, transition: "color 0.2s" }}>{f.title}</div>
+                  <div style={{ fontSize: 12, color: "#6b4c2a", lineHeight: 1.6 }}>{f.desc}</div>
+                </div>
+              ))}
+            </div>
+          </div>
+        </section>
+
+        {/* ── CREDIT SCORE EXPLAINER ── */}
+        <section style={{ maxWidth: 720, margin: "0 auto", padding: "56px 24px" }}>
+          <div style={{ textAlign: "center", marginBottom: 36 }}>
+            <div style={{ fontSize: 11, color: "#b45309", letterSpacing: 2, textTransform: "uppercase", fontWeight: "bold", marginBottom: 8 }}>Built-in Credit Education</div>
+            <h2 style={{ fontSize: "clamp(22px, 5vw, 36px)", fontWeight: "900", margin: "0 0 12px", color: "#2d1a06", letterSpacing: "-1px" }}>
+              Your oven reflects your credit.
+            </h2>
+            <p style={{ fontSize: 14, color: "#6b4c2a", maxWidth: 460, margin: "0 auto", lineHeight: 1.7 }}>
+              Your bakery's oven temperature is your credit score. Better score = better oven = better rates on every loan you take to expand.
+            </p>
+          </div>
+
+          {/* Credit ladder */}
+          <div style={{ display: "grid", gap: 8, marginBottom: 32 }}>
+            {creditBands.map((b, i) => (
+              <div key={i} style={{
+                display: "flex", alignItems: "center", gap: 14,
+                background: "rgba(255,255,255,0.6)",
+                border: `1.5px solid ${b.color}33`,
+                borderLeft: `4px solid ${b.color}`,
+                borderRadius: 12, padding: "12px 16px",
+                animation: `fadeSlideUp 0.5s ${0.07 * i}s ease both`,
+              }}>
+                <div style={{ fontSize: 22, flexShrink: 0 }}>{b.icon}</div>
+                <div style={{ flex: 1 }}>
+                  <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}>
+                    <span style={{ fontWeight: "bold", color: b.color, fontSize: 13 }}>{b.range} — {b.label}</span>
+                    <span style={{ fontSize: 11, color: "#6b4c2a" }}>{b.perk}</span>
+                  </div>
+                  <div style={{ background: "rgba(0,0,0,0.08)", borderRadius: 20, height: 5, marginTop: 6, overflow: "hidden" }}>
+                    <div style={{ width: `${100 - i * 18}%`, height: "100%", background: b.color, borderRadius: 20 }} />
+                  </div>
+                </div>
+              </div>
+            ))}
+          </div>
+
+          {/* Real-world cost callout */}
+          <div style={{
+            background: "rgba(255,255,255,0.75)",
+            border: "2px solid #d4a96a",
+            borderRadius: 20, padding: "24px 24px",
+            textAlign: "center",
+            boxShadow: "0 8px 28px rgba(180,83,9,0.1)",
+          }}>
+            <div style={{ fontSize: 13, color: "#6b4c2a", marginBottom: 6 }}>The real cost of a poor credit score on a $300,000 mortgage:</div>
+            <div style={{ display: "flex", justifyContent: "center", gap: 32, flexWrap: "wrap" }}>
+              <div>
+                <div style={{ fontSize: 11, color: "#16a34a", letterSpacing: 1, textTransform: "uppercase" }}>Score 760+</div>
+                <div style={{ fontSize: 28, fontWeight: "900", color: "#16a34a", fontFamily: "monospace" }}>$403k</div>
+                <div style={{ fontSize: 11, color: "#6b4c2a" }}>total paid</div>
+              </div>
+              <div style={{ display: "flex", alignItems: "center", fontSize: 20, color: "#d4a96a" }}>vs</div>
+              <div>
+                <div style={{ fontSize: 11, color: "#b91c1c", letterSpacing: 1, textTransform: "uppercase" }}>Score 580</div>
+                <div style={{ fontSize: 28, fontWeight: "900", color: "#b91c1c", fontFamily: "monospace" }}>$519k</div>
+                <div style={{ fontSize: 11, color: "#6b4c2a" }}>total paid</div>
+              </div>
+            </div>
+            <div style={{ fontSize: 13, color: "#b45309", fontWeight: "bold", marginTop: 10 }}>
+              $116,000 difference — from the same house, the same bank.
+            </div>
+          </div>
+        </section>
+
+        {/* ── TESTIMONIALS / LEARN SECTION ── */}
+        <section style={{
+          background: "rgba(42,18,4,0.96)",
+          padding: "56px 24px",
+        }}>
+          <div style={{ maxWidth: 680, margin: "0 auto", textAlign: "center" }}>
+            <div style={{ fontSize: 11, color: "#c8a96a", letterSpacing: 2, textTransform: "uppercase", fontWeight: "bold", marginBottom: 16 }}>What you'll actually learn</div>
+            <h2 style={{ fontSize: "clamp(22px, 5vw, 34px)", fontWeight: "900", margin: "0 0 40px", color: "#fef3e2", letterSpacing: "-1px" }}>
+              Finance lessons baked into every decision.
+            </h2>
+
+            <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(200px, 1fr))", gap: 14, marginBottom: 48 }}>
+              {[
+                { icon: "📅", title: "Payment History", desc: "35% of your credit score. Never miss a payment again.", stat: "35%" },
+                { icon: "📊", title: "Credit Utilization", desc: "Keep debt under 30% of your limit. See it live in the bar.", stat: "30%" },
+                { icon: "🏦", title: "Emergency Funds", desc: "Build a cushion before you need it. Your bakery will thank you.", stat: "3–6mo" },
+                { icon: "📉", title: "Compound Interest", desc: "Your sourdough starter is an index fund. Feed it early, feed it often.", stat: "∞" },
+              ].map((l, i) => (
+                <div key={i} style={{
+                  background: "rgba(255,255,255,0.05)",
+                  border: "1px solid rgba(245,200,66,0.2)",
+                  borderRadius: 16, padding: "20px 16px", textAlign: "left",
+                }}>
+                  <div style={{ fontSize: 28, marginBottom: 8 }}>{l.icon}</div>
+                  <div style={{ fontSize: 11, color: "#f5c842", fontWeight: "900", letterSpacing: 1, marginBottom: 4 }}>{l.stat}</div>
+                  <div style={{ fontSize: 14, fontWeight: "bold", color: "#fef3e2", marginBottom: 6 }}>{l.title}</div>
+                  <div style={{ fontSize: 12, color: "#c8a96a", lineHeight: 1.6 }}>{l.desc}</div>
+                </div>
+              ))}
+            </div>
+
+            <button onClick={onPlay} style={{
+              padding: "18px 52px",
+              background: "linear-gradient(135deg, #f5c842, #d97706)",
+              border: "none", borderRadius: 18,
+              fontWeight: "bold", fontSize: 18, color: "#2d1a06",
+              cursor: "pointer", fontFamily: "'Georgia', serif",
+              boxShadow: "0 8px 32px rgba(245,200,66,0.4)",
+              transition: "transform 0.15s, box-shadow 0.15s",
+              letterSpacing: "-0.3px",
+            }}
+              onMouseEnter={e => { e.currentTarget.style.transform = "translateY(-3px)"; e.currentTarget.style.boxShadow = "0 16px 40px rgba(245,200,66,0.5)"; }}
+              onMouseLeave={e => { e.currentTarget.style.transform = "none"; e.currentTarget.style.boxShadow = "0 8px 32px rgba(245,200,66,0.4)"; }}
+            >
+              🧁 Start Baking Now
+            </button>
+            <div style={{ fontSize: 12, color: "#c8a96a", marginTop: 14 }}>
+              Free to play · No sign-up · Runs in your browser
+            </div>
+          </div>
+        </section>
+
+        {/* ── RECIPE PREVIEW ── */}
+        <section style={{ maxWidth: 720, margin: "0 auto", padding: "56px 24px" }}>
+          <div style={{ textAlign: "center", marginBottom: 32 }}>
+            <div style={{ fontSize: 11, color: "#b45309", letterSpacing: 2, textTransform: "uppercase", fontWeight: "bold", marginBottom: 8 }}>The Menu</div>
+            <h2 style={{ fontSize: "clamp(22px, 4vw, 34px)", fontWeight: "900", margin: 0, color: "#2d1a06", letterSpacing: "-1px" }}>
+              Six recipes to unlock.
+            </h2>
+          </div>
+          <div style={{ display: "grid", gridTemplateColumns: "repeat(6, 1fr)", gap: 8, marginBottom: 16 }}>
+            {[
+              { icon: "🍞", name: "Bread",    unlock: "Day 1",     locked: false },
+              { icon: "🫐", name: "Muffin",   unlock: "Save 5",    locked: true },
+              { icon: "🥐", name: "Croissant",unlock: "Save 20",   locked: true },
+              { icon: "🍩", name: "Donut",    unlock: "Invest Lv3",locked: true },
+              { icon: "🎂", name: "Cake",     unlock: "Save 50",   locked: true },
+              { icon: "🪷", name: "Macaron",  unlock: "Prestige",  locked: true },
+            ].map((r, i) => (
+              <div key={i} style={{
+                background: r.locked ? "rgba(0,0,0,0.05)" : "rgba(255,255,255,0.7)",
+                border: `1.5px solid ${r.locked ? "#d4a96a44" : "#d4a96a"}`,
+                borderRadius: 14, padding: "14px 8px", textAlign: "center",
+                opacity: r.locked ? 0.55 : 1,
+              }}>
+                <div style={{ fontSize: 28 }}>{r.locked ? "🔒" : r.icon}</div>
+                <div style={{ fontSize: 11, fontWeight: "bold", color: "#3d2b1f", marginTop: 6 }}>{r.name}</div>
+                <div style={{ fontSize: 9, color: "#6b4c2a", marginTop: 2 }}>{r.unlock}</div>
+              </div>
+            ))}
+          </div>
+          <p style={{ textAlign: "center", fontSize: 12, color: "#6b4c2a" }}>
+            Each recipe unlocks by completing a financial habit mission — save, invest, resist. 🧁
+          </p>
+        </section>
+
+        {/* ── FOOTER ── */}
+        <footer style={{
+          background: "rgba(42,18,4,0.97)",
+          padding: "28px 24px",
+          textAlign: "center",
+        }}>
+          <div style={{ fontSize: 22, marginBottom: 6 }}>🧁</div>
+          <div style={{ fontSize: 15, fontWeight: "bold", color: "#f5c842", marginBottom: 4 }}>Dough & Dough</div>
+          <div style={{ fontSize: 11, color: "#c8a96a", marginBottom: 16 }}>A financial literacy game. Made with flour, butter, and good intentions.</div>
+          <button onClick={onPlay} style={{
+            padding: "11px 28px",
+            background: "#f5c842",
+            border: "none", borderRadius: 10,
+            fontWeight: "bold", fontSize: 13, color: "#3d2b1f",
+            cursor: "pointer", fontFamily: "'Georgia', serif",
+          }}>
+            Open Your Bakery →
+          </button>
+        </footer>
+      </div>
+
+      <style>{`
+        @keyframes fadeSlideUp {
+          from { opacity: 0; transform: translateY(24px); }
+          to   { opacity: 1; transform: translateY(0); }
+        }
+        @keyframes floatBob {
+          0%, 100% { transform: translateY(0) rotate(-4deg); }
+          50%       { transform: translateY(-18px) rotate(4deg); }
+        }
+        html { scroll-behavior: smooth; }
       `}</style>
     </div>
   );
